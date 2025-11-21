@@ -19,7 +19,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController phoneController = TextEditingController();
 
   late double height, width;
-  bool visible = true;
+  bool passwordVisible = true;
+  bool confirmPasswordVisible = true;
   bool isLoading = false;
   late User user;
 
@@ -72,15 +73,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 5),
                   TextField(
                     controller: passwordController,
-                    obscureText: visible,
+                    obscureText: passwordVisible,
                     decoration: InputDecoration(
                       labelText: 'Password',
                       suffixIcon: IconButton(
                         onPressed: () {
-                          if (visible) {
-                            visible = false;
+                          if (passwordVisible) {
+                            passwordVisible = false;
                           } else {
-                            visible = true;
+                            passwordVisible = true;
                           }
                           setState(() {});
                         },
@@ -92,16 +93,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 5),
                   TextField(
                     controller: confirmPasswordController,
-                    obscureText: visible,
+                    obscureText: confirmPasswordVisible,
                     decoration: InputDecoration(
                       labelText: 'Confirm Password',
                       border: OutlineInputBorder(),
                       suffixIcon: IconButton(
                         onPressed: () {
-                          if (visible) {
-                            visible = false;
+                          if (confirmPasswordVisible) {
+                            confirmPasswordVisible = false;
                           } else {
-                            visible = true;
+                            confirmPasswordVisible = true;
                           }
                           setState(() {});
                         },
@@ -214,6 +215,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
           backgroundColor: Colors.red,
         ),
       );
+      return;
+    }
+    if (!RegExp(r'^[0-9]+$').hasMatch(phone)) {
+      SnackBar snackBar = const SnackBar(
+        content: Text('Phone number must contain digits only'),
+        backgroundColor: Colors.red,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }
     showDialog(
