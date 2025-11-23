@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pawpal/models/user.dart';
+import 'package:pawpal/myconfig.dart';
 import 'package:pawpal/views/mainscreen.dart';
 import 'package:pawpal/views/registerscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -242,7 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     http
         .post(
-          Uri.parse('http://192.168.0.10/pawpal/api/login_user.php'),
+          Uri.parse('${MyConfig.baseUrl}/pawpal/api/login_user.php'),
           body: {'email': email, 'password': password},
         )
         .then((response) {
