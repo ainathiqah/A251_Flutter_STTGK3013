@@ -38,7 +38,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Register Page',
+          'Register',
           style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
         ),
       ),
@@ -52,13 +52,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Image.asset('assets/images/pawpal.png', scale: 3),
+                    child: Image.asset('assets/images/pawpal.png', scale: 2),
                   ),
                   SizedBox(height: 5),
                   TextField(
                     controller: nameController,
                     decoration: InputDecoration(
                       labelText: 'Name',
+                      prefixIcon: Icon(Icons.person, color: Colors.pinkAccent.shade100),
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -68,6 +69,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       labelText: 'Email',
+                      prefixIcon: Icon(Icons.email, color: Colors.pinkAccent.shade100),
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -77,6 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     obscureText: passwordVisible,
                     decoration: InputDecoration(
                       labelText: 'Password',
+                      prefixIcon: Icon(Icons.lock, color: Colors.pinkAccent.shade100),
                       suffixIcon: IconButton(
                         onPressed: () {
                           if (passwordVisible) {
@@ -97,6 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     obscureText: confirmPasswordVisible,
                     decoration: InputDecoration(
                       labelText: 'Confirm Password',
+                      prefixIcon: Icon(Icons.lock, color: Colors.pinkAccent.shade100),
                       border: OutlineInputBorder(),
                       suffixIcon: IconButton(
                         onPressed: () {
@@ -117,6 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       labelText: 'Phone',
+                      prefixIcon: Icon(Icons.phone, color: Colors.pinkAccent.shade100),
                       border: OutlineInputBorder(),
                     ),
                   ),

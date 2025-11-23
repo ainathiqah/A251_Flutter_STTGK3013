@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Login Page',
+          'Login',
           style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
         ),
       ),
@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Image.asset('assets/images/pawpal.png', scale: 3),
+                    child: Image.asset('assets/images/pawpal.png', scale: 2),
                   ),
                   SizedBox(height: 5),
                   TextField(
@@ -64,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       labelText: 'Email',
+                      prefixIcon: Icon(Icons.email, color: Colors.pinkAccent.shade100),
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -73,6 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: visible,
                     decoration: InputDecoration(
                       labelText: 'Password',
+                      prefixIcon: Icon(Icons.lock, color: Colors.pinkAccent.shade100),
                       suffixIcon: IconButton(
                         onPressed: () {
                           if (visible) {

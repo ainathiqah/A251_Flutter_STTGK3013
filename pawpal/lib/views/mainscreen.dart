@@ -15,7 +15,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Main Page",
+          "PawPal",
           style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
         ),
       ),
