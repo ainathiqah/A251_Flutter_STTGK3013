@@ -21,7 +21,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       body: Center(
         child: Text(
-          "Welcome, ${widget.user.userName}!",
+          "Welcome, ${widget.user.name}!",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
         ),
       ),
