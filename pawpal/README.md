@@ -18,6 +18,8 @@ Screenshots:
     <td><img src="https://github.com/user-attachments/assets/4a8684a9-0530-4868-a9fc-86ed49ba7f3e" width="180" /></td>
     <td width="15"></td>
     <td><img src="https://github.com/user-attachments/assets/3533a596-fced-4088-b969-5c7c65d03307" width="180" /></td>
+    <td><img src="https://github.com/user-attachments/assets/983cd42b-6baf-4992-847f-18471549ef92" width="180" /></td>
+
   </tr>
 </table>
 
