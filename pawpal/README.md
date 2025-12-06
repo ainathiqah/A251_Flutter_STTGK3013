@@ -16,11 +16,11 @@ Setup Steps:
 - Setup PHP Backend
 - Setup MySQL Database (name: pawpal_db > tbl_users & tbl_pets)
 
-API Explanation
+API Explanation:
 - submit_pet.php (acts as the main endpoint to receive the details of pet submission)
 - get_my_pets.php (will retrieve the values or details inside database and load into the main page)
 
-Sample JSON
+Sample JSON:
 - submit_pet request + success/fail response
 - get_my_pets request + success/no records
 
