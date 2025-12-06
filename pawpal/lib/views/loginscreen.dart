@@ -43,7 +43,11 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: Text(
           'Login',
-          style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'BalsamiqSansBold',
+          ),
         ),
       ),
       body: Center(
@@ -64,7 +68,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      prefixIcon: Icon(Icons.email, color: Colors.pinkAccent.shade100),
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: Colors.pinkAccent.shade100,
+                      ),
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -74,7 +81,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: visible,
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock, color: Colors.pinkAccent.shade100),
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: Colors.pinkAccent.shade100,
+                      ),
                       suffixIcon: IconButton(
                         onPressed: () {
                           if (visible) {
@@ -177,9 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: RichText(
                       text: TextSpan(
                         text: 'Don\'t have an account?  ',
-                        style: TextStyle(
-                          color: Colors.brown.shade800,
-                        ),
+                        style: TextStyle(color: Colors.brown.shade800),
                         children: [
                           TextSpan(
                             text: 'Register here',

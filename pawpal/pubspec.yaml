@@ -9,8 +9,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  geocoding: ^4.0.0
+  geolocator: ^14.0.2
   http: ^1.6.0
+  image_cropper: ^11.0.0
+  image_picker: ^1.2.1
+  intl: ^0.20.2
   shared_preferences: ^2.5.3
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -22,3 +28,23 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/fonts/
+
+  fonts:
+    - family: BalsamiqSans
+      fonts:
+        - asset: assets/fonts/BalsamiqSans-Regular.ttf
+
+    - family: BalsamiqSansBold
+      fonts:
+        - asset: assets/fonts/BalsamiqSans-Bold.ttf
+
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Regular.ttf
+
+    - family: NunitoBold
+      fonts:
+        - asset: assets/fonts/Nunito-Bold.ttf
+
+
