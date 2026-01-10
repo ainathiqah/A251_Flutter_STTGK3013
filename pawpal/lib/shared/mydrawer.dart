@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pawpal/models/user.dart';
+import 'package:pawpal/myconfig.dart';
 import 'package:pawpal/shared/animated_route.dart';
-import 'package:pawpal/views/loginscreen.dart';
+import 'package:pawpal/views/adoptionRecords.dart';
+import 'package:pawpal/views/donationHistory.dart';
+import 'package:pawpal/views/loginScreen.dart';
 import 'package:pawpal/views/mainscreen.dart';
-import 'package:pawpal/views/submitpetscreen.dart';
+import 'package:pawpal/views/myPetScreen.dart';
+import 'package:pawpal/views/profilescreen.dart';
 
 class MyDrawer extends StatefulWidget {
   final User user;
@@ -15,27 +19,18 @@ class MyDrawer extends StatefulWidget {
 
 class _MyDrawerState extends State<MyDrawer> {
   late double screenHeight;
+
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
+
     return Drawer(
       backgroundColor: Colors.pink.shade50,
       child: ListView(
         children: [
           UserAccountsDrawerHeader(
             decoration: BoxDecoration(color: Colors.pinkAccent[100]),
-            currentAccountPicture: CircleAvatar(
-              radius: 15,
-              child: Text(
-                widget.user.name!.isNotEmpty ? widget.user.name![0] : 'A',
-                style: const TextStyle(
-                  fontFamily: 'NunitoBold',
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+            currentAccountPicture: _buildProfileImage(),
             accountName: Text(
               'Hello, ${widget.user.name ?? ''}',
               style: const TextStyle(
@@ -54,8 +49,9 @@ class _MyDrawerState extends State<MyDrawer> {
               ),
             ),
           ),
+
           ListTile(
-            leading: Icon(Icons.home),
+            leading: Icon(Icons.home, color: Colors.pink.shade700),
             title: Text(
               'Home',
               style: const TextStyle(fontFamily: 'NunitoBold', fontSize: 17),
@@ -67,48 +63,97 @@ class _MyDrawerState extends State<MyDrawer> {
               );
             },
           ),
+
           ListTile(
-            leading: Icon(Icons.pets_rounded),
+            leading: Icon(Icons.pets_rounded, color: Colors.pink.shade700),
             title: Text(
-              'Pet Submission Form',
+              'My Pets',
+              style: const TextStyle(fontFamily: 'NunitoBold', fontSize: 17),
+            ),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                AnimatedRoute.slideFromRight(MyPetsScreen(user: widget.user)),
+              );
+            },
+          ),
+
+          // Update your MyDrawer.dart file:
+          ListTile(
+            leading: Icon(
+              Icons.history_rounded, 
+              color: Colors.pink.shade700,
+            ),
+            title: Text(
+              'Adoption Records',
               style: const TextStyle(fontFamily: 'NunitoBold', fontSize: 17),
             ),
             onTap: () {
               Navigator.pushReplacement(
                 context,
                 AnimatedRoute.slideFromRight(
-                  SubmitPetScreen(user: widget.user),
+                  AcceptAdoption(
+                    user: widget.user,
+                    petData:
+                        null, // Pass null since you're viewing all adoption records
+                  ),
                 ),
               );
             },
           ),
+
           ListTile(
-            leading: Icon(Icons.settings),
-            title: Text(
-              'Settings',
-              style: const TextStyle(fontFamily: 'NunitoBold', fontSize: 17),
+            leading: Icon(
+              Icons.attach_money_rounded,
+              color: Colors.pink.shade700,
             ),
-            onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => Settings()),
-              // );
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.login),
             title: Text(
-              'Logout',
+              'Donation History',
               style: const TextStyle(fontFamily: 'NunitoBold', fontSize: 17),
             ),
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
+                MaterialPageRoute(
+                  builder: (context) => DonationHistory(user: widget.user),
+                ),
               );
             },
           ),
-          
+
+          ListTile(
+            leading: Icon(Icons.person_rounded, color: Colors.pink.shade700),
+            title: Text(
+              'Profile',
+              style: const TextStyle(fontFamily: 'NunitoBold', fontSize: 17),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(user: widget.user),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.logout,
+              color: Colors.pink.shade700,
+            ), // Changed to logout icon
+            title: Text(
+              'Logout',
+              style: const TextStyle(fontFamily: 'NunitoBold', fontSize: 17),
+            ),
+            onTap: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+                (route) => false, // This condition removes all previous routes
+              );
+            },
+          ),
+
           SizedBox(
             height: screenHeight / 3.5,
             child: Column(
@@ -121,6 +166,43 @@ class _MyDrawerState extends State<MyDrawer> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildProfileImage() {
+    if (widget.user.image != null && widget.user.image!.isNotEmpty) {
+      return CircleAvatar(
+        backgroundColor: Colors.white,
+        child: ClipOval(
+          child: Image.network(
+            '${MyConfig.baseUrl}/pawpal/assets/profileImage/${widget.user.image}',
+            width: 60,
+            height: 60,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return _buildInitialsAvatar();
+            },
+          ),
+        ),
+      );
+    }
+
+    return _buildInitialsAvatar();
+  }
+
+  Widget _buildInitialsAvatar() {
+    return CircleAvatar(
+      backgroundColor: Colors.pink.shade200,
+      child: Text(
+        widget.user.name?.isNotEmpty == true
+            ? widget.user.name![0].toUpperCase()
+            : 'U',
+        style: const TextStyle(
+          fontSize: 24,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

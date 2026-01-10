@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pawpal/models/user.dart';
 import 'package:pawpal/myconfig.dart';
-import 'package:pawpal/views/loginscreen.dart';
+import 'package:pawpal/views/loginScreen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -253,7 +253,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Register this account?'),
+        title: Text(
+          'Register this account?',
+          style: TextStyle(
+            fontFamily: 'BalsamiqSansBold',
+            color: Colors.pink.shade800,
+          ),
+        ),
         actions: [
           TextButton(
             style: TextButton.styleFrom(
@@ -266,14 +272,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Text('Register', style: TextStyle(color: Colors.white)),
           ),
           TextButton(
-            style: TextButton.styleFrom(
-              backgroundColor: Colors.pinkAccent.shade100,
-            ),
+            style: TextButton.styleFrom(backgroundColor: Colors.grey.shade300),
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel', style: TextStyle(color: Colors.white)),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.grey.shade800),
+            ),
           ),
         ],
-        content: Text('Are you sure you want to register this account?'),
+        content: Text(
+          'Are you sure you want to register this account?',
+          style: TextStyle(fontFamily: 'Nunito', fontSize: 16),
+        ),
       ),
     );
   }

@@ -7,9 +7,13 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     echo json_encode(array('error' => 'Method Not Allowed'));
     exit();
 }
+
 $user_id = $_POST['user_id'];
 $pet_name = $_POST['pet_name'];
 $pet_type = $_POST['pet_type'];
+$pet_age = $_POST['pet_age'];
+$gender = $_POST['pet_gender'];
+$health = $_POST['pet_health']; 
 $category = $_POST['category'];
 $description = $_POST['description'];
 $lat = $_POST['lat'];
@@ -20,22 +24,20 @@ $image3 = base64_decode($_POST["image3"]);
 
 $image_paths = "";
 
-//Insert new pet submission
+// Insert new pet submission with additional fields
 $sqlinsert = "INSERT INTO tbl_pets 
-(user_id, pet_name, pet_type, category, description, image_paths, lat, lng) 
+(user_id, pet_name, pet_type, pet_age, pet_gender, pet_health, category, description, image_paths, lat, lng) 
 VALUES 
-('$user_id', '$pet_name', '$pet_type', '$category', '$description', '', '$lat', '$lng')";
+('$user_id', '$pet_name', '$pet_type', '$pet_age', '$gender', '$health', '$category', '$description', '', '$lat', '$lng')";
 
 try {
     if ($conn->query($sqlinsert) === TRUE) {
         $last_id = $conn->insert_id;
 
         if (!empty($image1)) {
-            
             $path = "../assets/petImage/pet_".$last_id."_1.png";
             file_put_contents($path, $image1);
             $image_paths = "pet_".$last_id."_1.png";
-            
         }
         if (!empty($image2)) {
             $path = "../assets/petImage/pet_".$last_id."_2.png";
@@ -51,7 +53,7 @@ try {
         $updatesql ="UPDATE tbl_pets SET image_paths = '$image_paths' WHERE pet_id = '$last_id'";
         $conn->query($updatesql);
 
-        $response = array('success' => true, 'message' => 'Pet submitted successful');
+        $response = array('success' => true, 'message' => 'Pet submitted successfully');
        
         sendJsonResponse($response);
         exit();

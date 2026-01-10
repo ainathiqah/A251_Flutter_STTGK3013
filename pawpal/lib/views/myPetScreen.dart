@@ -6,16 +6,17 @@ import 'package:pawpal/models/user.dart';
 import 'package:pawpal/myconfig.dart';
 import 'package:pawpal/shared/mydrawer.dart';
 import 'package:pawpal/views/petDetailScreen.dart';
+import 'package:pawpal/views/submitpetscreen.dart';
 
-class MainScreen extends StatefulWidget {
+class MyPetsScreen extends StatefulWidget {
   final User user;
-  const MainScreen({super.key, required this.user});
+  const MyPetsScreen({super.key, required this.user});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<MyPetsScreen> createState() => _MyPetsScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MyPetsScreenState extends State<MyPetsScreen> {
   List<Pets> petList = [];
   List<Pets> filteredPets = [];
   String status = "Loading...";
@@ -45,7 +46,7 @@ class _MainScreenState extends State<MainScreen> {
       drawer: MyDrawer(user: widget.user),
       appBar: AppBar(
         title: Text(
-          'PawPal',
+          'My Pets',
           style: TextStyle(
             fontSize: 25,
             color: Colors.white,
@@ -335,8 +336,8 @@ class _MainScreenState extends State<MainScreen> {
                                           ),
                                           const SizedBox(height: 6),
 
-                                          // In MainScreen, update the adopted badge:
-                                          // In MainScreen.dart - update the badge section:
+                                          // Adoption Status
+                                          // In MyPetsScreen.dart - update the badge section:
                                           if (filteredPets[index]
                                                   .adoptionStatus ==
                                               'adopted')
@@ -360,11 +361,7 @@ class _MainScreenState extends State<MainScreen> {
                                                   ),
                                                   SizedBox(width: 4),
                                                   Text(
-                                                    widget.user.userId ==
-                                                            filteredPets[index]
-                                                                .userId
-                                                        ? "Your Pet (Adopted)"
-                                                        : "Adopted",
+                                                    "Adopted",
                                                     style: TextStyle(
                                                       fontSize: 12,
                                                       color: Colors.white,
@@ -399,46 +396,7 @@ class _MainScreenState extends State<MainScreen> {
                                                   ),
                                                   SizedBox(width: 4),
                                                   Text(
-                                                    widget.user.userId ==
-                                                            filteredPets[index]
-                                                                .userId
-                                                        ? "Your Pet (Pending)"
-                                                        : "Pending Review",
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.white,
-                                                      fontFamily: 'Nunito',
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          else if (filteredPets[index]
-                                                  .adoptionStatus ==
-                                              'available')
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 8,
-                                                vertical: 4,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: Colors
-                                                    .green
-                                                    .shade400, // Green for available
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Icon(
-                                                    Icons.favorite,
-                                                    size: 12,
-                                                    color: Colors.white,
-                                                  ),
-                                                  SizedBox(width: 4),
-                                                  Text(
-                                                    "Available",
+                                                    "Pending Adoption",
                                                     style: TextStyle(
                                                       fontSize: 12,
                                                       color: Colors.white,
@@ -471,6 +429,18 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SubmitPetScreen(user: widget.user),
+            ),
+          );
+        },
+        backgroundColor: Colors.pinkAccent.shade100,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
     );
   }
 
@@ -498,7 +468,11 @@ class _MainScreenState extends State<MainScreen> {
     });
 
     http
-        .get(Uri.parse('${MyConfig.baseUrl}/pawpal/api/get_all_pets.php'))
+        .get(
+          Uri.parse(
+            '${MyConfig.baseUrl}/pawpal/api/get_my_pets.php?user_id=${widget.user.userId}',
+          ),
+        )
         .then((response) {
           if (response.statusCode == 200) {
             var jsonResponse = jsonDecode(response.body);

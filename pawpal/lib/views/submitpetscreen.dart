@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:pawpal/models/user.dart';
 import 'package:pawpal/myconfig.dart';
-import 'package:pawpal/views/mainscreen.dart';
+import 'package:pawpal/views/myPetScreen.dart';
 
 class SubmitPetScreen extends StatefulWidget {
   final User? user;
@@ -21,28 +21,41 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
   late User user;
   //list of pet types and categories
   List<String> petTypes = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Fish', 'Other'];
-  List<String> categories = [
-    'Adoption',
-    'Donation Request',
-    'Help/Rescue',
-    'Other',
+  List<String> categories = ['Adoption', 'Donation Request', 'Help/Rescue'];
+  List<String> genderOptions = ['Male', 'Female', 'Unknown'];
+  List<String> healthOptions = [
+    'Healthy',
+    'Minor Issues',
+    'Medical Treatment Needed',
+    'Special Needs',
+    'Unknown',
   ];
+
   //controllers
   TextEditingController petNameController = TextEditingController();
+  TextEditingController petAgeController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+
   //screen size
   late double width, height;
+
   //image
   File? image1, image2, image3; // mobile
-  //default pet type and category
+
+  //default selections
   String selectedPets = 'Other';
-  String selectedCategory = 'Other';
+  String selectedCategory = 'Adoption';
+  String selectedGender = 'Unknown';
+  String selectedHealth = 'Healthy';
+
   //location
   late Position location;
+
   //image picker
   ImagePicker picker = ImagePicker();
 
+  @override
   void initState() {
     super.initState();
     _determinePosition();
@@ -54,9 +67,8 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
     height = MediaQuery.of(context).size.height;
     if (width > 600) {
       width = 600;
-    } else {
-      width = width;
     }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -65,7 +77,7 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => MainScreen(user: widget.user!),
+                builder: (context) => MyPetsScreen(user: widget.user!),
               ),
             );
           },
@@ -84,94 +96,38 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
               child: Column(
                 children: [
                   SizedBox(height: 10),
-                  //Pet image
+
                   // Image preview row
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        GestureDetector(
-                          onTap: () => pickimagedialog(1),
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: const Color.fromARGB(255, 254, 183, 208),
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: image1 != null
-                                ? Image.file(image1!, fit: BoxFit.cover)
-                                : Icon(
-                                    Icons.add_a_photo,
-                                    size: 50,
-                                    color: Colors.pink.shade300,
-                                  ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => pickimagedialog(2),
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: const Color.fromARGB(255, 254, 183, 208),
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: image2 != null
-                                ? Image.file(image2!, fit: BoxFit.cover)
-                                : Icon(
-                                    Icons.add_a_photo,
-                                    size: 50,
-                                    color: Colors.pink.shade300,
-                                  ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => pickimagedialog(3),
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: const Color.fromARGB(255, 254, 183, 208),
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: image3 != null
-                                ? Image.file(image3!, fit: BoxFit.cover)
-                                : Icon(
-                                    Icons.add_a_photo,
-                                    size: 50,
-                                    color: Colors.pink.shade300,
-                                  ),
-                          ),
-                        ),
+                        _buildImageContainer(1),
+                        _buildImageContainer(2),
+                        _buildImageContainer(3),
                       ],
                     ),
                   ),
-
                   SizedBox(height: 10),
-                  //Pet Name Textfield
+
+                  // Pet Name Textfield
                   TextField(
                     controller: petNameController,
                     decoration: InputDecoration(
-                      labelText: 'Pet Name',
+                      labelText: 'Pet Name *',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                     ),
                   ),
                   SizedBox(height: 10),
+
                   // Pet Type Dropdown
                   DropdownButtonFormField<String>(
                     value: selectedPets,
                     decoration: InputDecoration(
-                      labelText: 'Pet Type',
+                      labelText: 'Pet Type *',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -189,11 +145,70 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                     },
                   ),
                   SizedBox(height: 10),
+
+                  // Pet Age TextField
+                  TextField(
+                    controller: petAgeController,
+                    decoration: InputDecoration(
+                      labelText: 'Pet Age (e.g., 2 years) *',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+
+                  // Gender Dropdown
+                  DropdownButtonFormField<String>(
+                    value: selectedGender,
+                    decoration: InputDecoration(
+                      labelText: 'Gender *',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                    items: genderOptions.map((String gender) {
+                      return DropdownMenuItem<String>(
+                        value: gender,
+                        child: Text(gender),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedGender = newValue!;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 10),
+
+                  // Health Condition Dropdown
+                  DropdownButtonFormField<String>(
+                    value: selectedHealth,
+                    decoration: InputDecoration(
+                      labelText: 'Health Condition *',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                    items: healthOptions.map((String health) {
+                      return DropdownMenuItem<String>(
+                        value: health,
+                        child: Text(health),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedHealth = newValue!;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 10),
+
                   // Category Dropdown
                   DropdownButtonFormField<String>(
                     value: selectedCategory,
                     decoration: InputDecoration(
-                      labelText: 'Submission Category',
+                      labelText: 'Submission Category *',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -211,24 +226,28 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                     },
                   ),
                   SizedBox(height: 10),
+
                   // Description TextField
                   TextField(
                     controller: descriptionController,
                     decoration: InputDecoration(
-                      labelText: 'Description',
+                      labelText: 'Description *',
+                      hintText:
+                          'Describe the pet\'s personality, habits, special needs...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                     ),
-                    maxLines: 3,
+                    maxLines: 4,
                   ),
                   SizedBox(height: 10),
+
                   // Location TextField
                   TextField(
                     maxLines: 3,
                     controller: locationController,
                     decoration: InputDecoration(
-                      labelText: 'Location',
+                      labelText: 'Location *',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -253,7 +272,9 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                     ),
                   ),
 
-                  SizedBox(height: 10),
+                  SizedBox(height: 20),
+
+                  // Submit Button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.pinkAccent.shade100,
@@ -276,9 +297,11 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                   ),
 
                   SizedBox(height: 10),
+
+                  // Clear Button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pinkAccent.shade100,
+                      backgroundColor: Colors.grey.shade300,
                       minimumSize: Size(width, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
@@ -288,9 +311,9 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                       clearAll();
                     },
                     child: Text(
-                      'Clear',
+                      'Clear All',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.grey.shade800,
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                       ),
@@ -305,17 +328,69 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
     );
   }
 
+  Widget _buildImageContainer(int imageNumber) {
+    return GestureDetector(
+      onTap: () => pickimagedialog(imageNumber),
+      child: Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color.fromARGB(255, 254, 183, 208)),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: _getImage(imageNumber) != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.file(_getImage(imageNumber)!, fit: BoxFit.cover),
+              )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add_a_photo,
+                      size: 30,
+                      color: Colors.pink.shade300,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      "Image $imageNumber",
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.pink.shade300,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+      ),
+    );
+  }
+
+  File? _getImage(int imageNumber) {
+    switch (imageNumber) {
+      case 1:
+        return image1;
+      case 2:
+        return image2;
+      case 3:
+        return image3;
+      default:
+        return null;
+    }
+  }
+
   void pickimagedialog(int imageNumber) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Pick Image'),
+          title: Text('Select Image $imageNumber'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.image),
+                leading: Icon(Icons.image, color: Colors.pink.shade300),
                 title: Text('Gallery'),
                 onTap: () {
                   Navigator.pop(context);
@@ -323,7 +398,7 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.camera),
+                leading: Icon(Icons.camera, color: Colors.pink.shade300),
                 title: Text('Camera'),
                 onTap: () {
                   Navigator.pop(context);
@@ -393,10 +468,23 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
   void showSubmitDialog() {
     // Validation for empty fields
     if (petNameController.text.trim().isEmpty ||
-        descriptionController.text.trim().isEmpty) {
+        petAgeController.text.trim().isEmpty ||
+        descriptionController.text.trim().isEmpty ||
+        locationController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Please fill in all fields"),
+          content: Text("Please fill in all required fields (*)"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Validation for age
+    if (petAgeController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Please enter pet age"),
           backgroundColor: Colors.red,
         ),
       );
@@ -414,48 +502,48 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
       return;
     }
 
-    // Image validation: mobile uses image
+    // Image validation
     if (image1 == null && image2 == null && image3 == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Please select an image"),
+          content: Text("Please select at least one image"),
           backgroundColor: Colors.red,
         ),
       );
       return;
     }
 
-    // Validation for location
-    if (locationController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Please click the location icon to retrieve address"),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
     // Confirm dialog
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Pet Submission'),
-          content: const Text(
-            'Are you sure you want to submit all the details?',
+          title: Text(
+            'Submit Pet Details',
+            style: TextStyle(
+              fontFamily: 'BalsamiqSansBold',
+              color: Colors.pink.shade800,
+            ),
+          ),
+
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [Text('Are you sure you want to submit this pet?',
+            style: TextStyle(fontFamily: 'Nunito', fontSize: 16),),
+            ],
           ),
           actions: [
             TextButton(
               style: TextButton.styleFrom(
-                backgroundColor: Colors.pinkAccent.shade100,
+                backgroundColor: Colors.grey.shade300,
               ),
               onPressed: () => Navigator.pop(context),
-              child: const Text(
+              child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.grey.shade800),
               ),
             ),
-
             TextButton(
               style: TextButton.styleFrom(
                 backgroundColor: Colors.pinkAccent.shade100,
@@ -479,6 +567,9 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
     String petName = petNameController.text.trim();
     String petType = selectedPets;
     String petCategory = selectedCategory;
+    String petAge = petAgeController.text.trim();
+    String petGender = selectedGender;
+    String petHealth = selectedHealth;
     String description = descriptionController.text.trim();
     String img1 = "";
     String img2 = "";
@@ -501,6 +592,9 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
             'user_id': widget.user!.userId.toString(),
             'pet_name': petName,
             'pet_type': petType,
+            'pet_age': petAge,
+            'pet_gender': petGender, // Added gender
+            'pet_health': petHealth, // Added health condition
             'category': petCategory,
             'description': description,
             'image1': img1,
@@ -514,32 +608,31 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
           print(response.body);
 
           if (response.statusCode == 200) {
-            var jsonResponse = response.body;
-            var resarray = jsonDecode(jsonResponse);
+            var jsonResponse = jsonDecode(response.body);
 
-            if (resarray['success'] == true) {
+            if (jsonResponse['success'] == true) {
               if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(resarray['message']), // Green success message
+                  content: Text(
+                    jsonResponse['message'] ?? 'Pet submitted successfully!',
+                  ),
                   backgroundColor: Colors.green,
                 ),
               );
 
-              // Navigate back to main
+              // Navigate back to my pets screen
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MainScreen(user: widget.user!),
+                  builder: (context) => MyPetsScreen(user: widget.user!),
                 ),
               );
             } else {
               if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(
-                    resarray['message'] ?? "Submission failed",
-                  ), // Red fail message
+                  content: Text(jsonResponse['message'] ?? "Submission failed"),
                   backgroundColor: Colors.red,
                 ),
               );
@@ -553,6 +646,15 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
               ),
             );
           }
+        })
+        .catchError((error) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Error: $error"),
+              backgroundColor: Colors.red,
+            ),
+          );
         });
   }
 
@@ -562,8 +664,6 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      //test where location service is enabled or not
-      //if not
       return Future.error('Location services are disabled.');
     }
 
@@ -587,17 +687,30 @@ class _SubmitPetScreenState extends State<SubmitPetScreen> {
   void clearAll() {
     // Clear all text fields
     petNameController.clear();
+    petAgeController.clear();
     descriptionController.clear();
     locationController.clear();
 
+    // Reset dropdowns
     setState(() {
       selectedPets = 'Other';
-      selectedCategory = 'Other';
+      selectedCategory = 'Adoption';
+      selectedGender = 'Unknown';
+      selectedHealth = 'Healthy';
     });
 
     // Clear images
-    image1 = null;
-    image2 = null;
-    image3 = null;
+    setState(() {
+      image1 = null;
+      image2 = null;
+      image3 = null;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('All fields cleared'),
+        backgroundColor: Colors.blue,
+      ),
+    );
   }
 }
