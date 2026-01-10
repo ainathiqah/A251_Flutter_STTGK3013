@@ -9,30 +9,9 @@ if (empty($user_id)) {
     exit();
 }
 
-// Get adoption requests where this user is the requester OR the pet owner
-// Let's first check what we have in the database
-$debug_sql = "SELECT 
-    a.adoption_id,
-    a.user_id as requester_id,
-    a.pet_id,
-    a.motivation,
-    a.adoption_status,
-    a.request_date,
-    p.pet_name,
-    p.user_id as pet_owner_id,
-    u.name as requester_name
-FROM tbl_adoptions a
-LEFT JOIN tbl_pets p ON a.pet_id = p.pet_id
-LEFT JOIN tbl_users u ON a.user_id = u.user_id
-ORDER BY a.request_date DESC";
-
-$debug_result = $conn->query($debug_sql);
-$all_requests = [];
-while ($row = $debug_result->fetch_assoc()) {
-    $all_requests[] = $row;
-}
-
-// Now get requests for pets owned by this user
+// Get ALL adoption requests for this user:
+// 1. Where user is the REQUESTER (user_id in tbl_adoptions)
+// 2. Where user is the PET OWNER (p.user_id in tbl_pets)
 $sql = "SELECT 
     a.adoption_id,
     a.user_id as requester_id,
@@ -44,16 +23,23 @@ $sql = "SELECT
     p.pet_type,
     p.pet_age,
     p.pet_gender,
-    p.adoption_status as pet_adoption_status,
-    u.name as requester_name,
-    u.email as requester_email,
-    u.phone as requester_phone,
-    ou.name as owner_name  -- Pet owner name
+    
+    -- Requester info (always the user who made the request)
+    ur.name as requester_name,
+    ur.email as requester_email,
+    ur.phone as requester_phone,
+    
+    -- Pet owner info
+    po.name as owner_name,
+    po.user_id as owner_id,
+    po.email as owner_email
+    
 FROM tbl_adoptions a
 INNER JOIN tbl_pets p ON a.pet_id = p.pet_id
-INNER JOIN tbl_users u ON a.user_id = u.user_id
-INNER JOIN tbl_users ou ON p.user_id = ou.user_id  -- Join for pet owner
-WHERE p.user_id = '$user_id'  -- This user owns the pet
+INNER JOIN tbl_users ur ON a.user_id = ur.user_id  -- User who made the request
+INNER JOIN tbl_users po ON p.user_id = po.user_id  -- Pet owner
+WHERE a.user_id = '$user_id'  -- User is the requester
+   OR p.user_id = '$user_id'  -- User is the pet owner
 ORDER BY a.request_date DESC";
 
 $result = $conn->query($sql);
@@ -64,30 +50,17 @@ if ($result && $result->num_rows > 0) {
         $requests[] = $row;
     }
     
-    // For debugging
-    error_log("DEBUG - User $user_id (pet owner) has " . count($requests) . " adoption requests");
-    error_log("DEBUG - All adoption requests in DB: " . json_encode($all_requests));
-    
     echo json_encode([
         "success" => true, 
-        "data" => $requests,
-        "debug" => [
-            "total_requests_in_db" => count($all_requests),
-            "user_requests" => count($requests),
-            "user_id" => $user_id
-        ]
+        "data" => $requests
     ]);
 } else {
-    error_log("DEBUG - No adoption requests found for pet owner: $user_id");
     echo json_encode([
         "success" => false, 
         "data" => [], 
-        "message" => "No adoption requests found for your pets",
-        "debug" => [
-            "total_requests_in_db" => count($all_requests),
-            "all_requests" => $all_requests,
-            "user_id" => $user_id
-        ]
+        "message" => "No adoption records found"
     ]);
 }
+
+$conn->close();
 ?>
