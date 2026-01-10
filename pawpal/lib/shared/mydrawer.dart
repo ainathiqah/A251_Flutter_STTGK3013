@@ -78,7 +78,6 @@ class _MyDrawerState extends State<MyDrawer> {
             },
           ),
 
-          // Update your MyDrawer.dart file:
           ListTile(
             leading: Icon(
               Icons.history_rounded, 
@@ -93,9 +92,7 @@ class _MyDrawerState extends State<MyDrawer> {
                 context,
                 AnimatedRoute.slideFromRight(
                   AcceptAdoption(
-                    user: widget.user,
-                    petData:
-                        null, // Pass null since you're viewing all adoption records
+                    user: widget.user
                   ),
                 ),
               );

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:pawpal/models/pets.dart';
 import 'package:pawpal/models/user.dart';
 import 'package:pawpal/myconfig.dart';
 import 'package:pawpal/shared/mydrawer.dart';
@@ -9,8 +8,7 @@ import 'package:intl/intl.dart';
 
 class AcceptAdoption extends StatefulWidget {
   final User user;
-  final Pets? petData;
-  const AcceptAdoption({super.key, required this.user, required this.petData});
+  const AcceptAdoption({super.key, required this.user});
 
   @override
   State<AcceptAdoption> createState() => _AcceptAdoptionState();
@@ -126,32 +124,33 @@ class _AcceptAdoptionState extends State<AcceptAdoption> {
                     ),
                   )
                 : filteredAdoptions.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.pets, size: 60, color: Colors.pink.shade100),
-                        const SizedBox(height: 10),
-                        Text(
-                          status,
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey[600],
-                            fontFamily: 'Nunito',
-                            fontWeight: FontWeight.w500,
-                          ),
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.pets,
+                                size: 60, color: Colors.pink.shade100),
+                            const SizedBox(height: 10),
+                            Text(
+                              status,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey[600],
+                                fontFamily: 'Nunito',
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.only(top: 10, bottom: 80),
-                    itemCount: filteredAdoptions.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final request = filteredAdoptions[index];
-                      return adoptionCard(request, index);
-                    },
-                  ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.only(top: 10, bottom: 80),
+                        itemCount: filteredAdoptions.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final request = filteredAdoptions[index];
+                          return adoptionCard(request, index);
+                        },
+                      ),
           ),
         ],
       ),
@@ -159,24 +158,57 @@ class _AcceptAdoptionState extends State<AcceptAdoption> {
   }
 
   Widget adoptionCard(Map<String, dynamic> request, int index) {
-    // Check if this request is for an already adopted pet
-    bool isAlreadyAdopted = request['adoption_status'] == 'adopted';
+    String adoptionStatus = request['adoption_status'] ?? 'pending';
+    bool isOwner = (request['owner_id']?.toString() ==
+        widget.user.userId?.toString());
+
+    Color getStatusColor(String status) {
+      switch (status) {
+        case 'adopted':
+          return Colors.green;
+        case 'rejected':
+          return Colors.red;
+        case 'cancelled':
+          return Colors.grey;
+        case 'pending':
+        default:
+          return Colors.orange;
+      }
+    }
+
+    String getStatusText(String status) {
+      switch (status) {
+        case 'adopted':
+          return "ADOPTED";
+        case 'rejected':
+          return "REJECTED";
+        case 'cancelled':
+          return "CANCELLED";
+        case 'pending':
+        default:
+          return "PENDING";
+      }
+    }
 
     return Card(
       elevation: 3,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: isAlreadyAdopted
-          ? Colors.grey.shade100
-          : (index % 2 == 0)
-          ? Colors.pink.shade50
-          : Color.fromARGB(255, 255, 201, 220),
+      color: adoptionStatus == 'adopted'
+          ? Colors.green.shade50
+          : adoptionStatus == 'rejected'
+              ? Colors.red.shade50
+              : adoptionStatus == 'cancelled'
+                  ? Colors.grey.shade100
+                  : (index % 2 == 0)
+                      ? Colors.pink.shade50
+                      : Color.fromARGB(255, 255, 201, 220),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with Pet Name and Type
+            // Header with Pet Name and Role
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -205,34 +237,77 @@ class _AcceptAdoptionState extends State<AcceptAdoption> {
                     ],
                   ),
                 ),
-                if (isAlreadyAdopted)
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.indigo.shade400,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      "ADOPTED",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'NunitoBold',
-                        fontSize: 12,
-                      ),
+                // User Role Badge
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: isOwner ? Colors.purple.shade400 : Colors.teal.shade400,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    isOwner ? "MY PET" : "I REQUESTED",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'NunitoBold',
+                      fontSize: 12,
                     ),
                   ),
+                ),
               ],
             ),
 
             const SizedBox(height: 12),
 
-            // Requester Info
+            // Status Badge
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: getStatusColor(adoptionStatus).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: getStatusColor(adoptionStatus)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    adoptionStatus == 'adopted'
+                        ? Icons.check_circle
+                        : adoptionStatus == 'rejected'
+                            ? Icons.cancel
+                            : adoptionStatus == 'cancelled'
+                                ? Icons.block
+                                : Icons.hourglass_empty,
+                    color: getStatusColor(adoptionStatus),
+                    size: 18,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    getStatusText(adoptionStatus),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: getStatusColor(adoptionStatus),
+                      fontFamily: 'NunitoBold',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // User Info
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.pink.shade200,
+                  backgroundColor:
+                      isOwner ? Colors.purple.shade200 : Colors.teal.shade200,
                   radius: 16,
-                  child: Icon(Icons.person, size: 18, color: Colors.white),
+                  child: Icon(
+                    isOwner ? Icons.pets : Icons.person,
+                    size: 18,
+                    color: Colors.white,
+                  ),
                 ),
                 SizedBox(width: 10),
                 Expanded(
@@ -240,17 +315,30 @@ class _AcceptAdoptionState extends State<AcceptAdoption> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Requested by: ${request['requester_name'] ?? 'Unknown'}",
+                        isOwner
+                            ? "Requester: ${request['requester_name'] ?? 'Unknown'}"
+                            : "Owner: ${request['owner_name'] ?? 'Unknown'}",
                         style: TextStyle(
                           fontSize: 15,
-                          color: Colors.pink.shade700,
+                          color: isOwner
+                              ? Colors.purple.shade700
+                              : Colors.teal.shade700,
                           fontFamily: 'Nunito',
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      if (request['requester_email'] != null)
+                      if (isOwner && request['requester_email'] != null)
                         Text(
                           request['requester_email'],
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade600,
+                            fontFamily: 'Nunito',
+                          ),
+                        ),
+                      if (!isOwner && request['owner_email'] != null)
+                        Text(
+                          request['owner_email'] ?? 'No email provided',
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.grey.shade600,
@@ -263,16 +351,15 @@ class _AcceptAdoptionState extends State<AcceptAdoption> {
               ],
             ),
 
-            const SizedBox(height: 12),
-
             // Motivation Message
             if (request['motivation'] != null &&
                 request['motivation'].isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 12),
                   Text(
-                    "Why they want to adopt:",
+                    isOwner ? "Requester's message:" : "Your message:",
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey.shade700,
@@ -300,37 +387,35 @@ class _AcceptAdoptionState extends State<AcceptAdoption> {
                 ],
               ),
 
-            // Footer with Date only (Accept button removed)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Requested: ${formatDate(request['request_date'])}",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.pink.shade600,
-                    fontFamily: 'NunitoBold',
-                  ),
-                ),
-                
-                // Status badge for pending requests
-                if (!isAlreadyAdopted && request['adoption_status'] == 'pending')
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.shade400,
-                      borderRadius: BorderRadius.circular(20),
+            // Footer with Date
+            const SizedBox(height: 8),
+            Container(
+              padding: EdgeInsets.only(top: 12),
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: Colors.grey.shade300)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Requested: ${formatDate(request['request_date'])}",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.pink.shade600,
+                      fontFamily: 'NunitoBold',
                     ),
-                    child: Text(
-                      "PENDING",
+                  ),
+                  if (adoptionStatus == 'pending' && isOwner)
+                    Text(
+                      "Waiting for your action",
                       style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'NunitoBold',
                         fontSize: 12,
+                        color: Colors.orange.shade600,
+                        fontFamily: 'NunitoBold',
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -358,7 +443,7 @@ class _AcceptAdoptionState extends State<AcceptAdoption> {
           adoptionList = List<Map<String, dynamic>>.from(jsonResponse['data']);
           setState(() {
             filteredAdoptions = List.from(adoptionList);
-            status = adoptionList.isEmpty ? "No adoption requests found" : "";
+            status = adoptionList.isEmpty ? "No adoption records found" : "";
             isLoading = false;
           });
           applyFilters();
@@ -366,13 +451,13 @@ class _AcceptAdoptionState extends State<AcceptAdoption> {
           setState(() {
             adoptionList = [];
             filteredAdoptions = [];
-            status = jsonResponse['message'] ?? "No requests found";
+            status = jsonResponse['message'] ?? "No records found";
             isLoading = false;
           });
         }
       } else {
         setState(() {
-          status = "Failed to load requests";
+          status = "Failed to load records";
           isLoading = false;
         });
       }
@@ -384,8 +469,6 @@ class _AcceptAdoptionState extends State<AcceptAdoption> {
     }
   }
 
-  // REMOVED acceptAdoption function since we're not accepting anymore
-
   void applyFilters() {
     String searchText = searchController.text.toLowerCase();
 
@@ -394,23 +477,31 @@ class _AcceptAdoptionState extends State<AcceptAdoption> {
         return searchText.isEmpty ||
             (request['pet_name'] != null &&
                 request['pet_name'].toString().toLowerCase().contains(
-                  searchText,
-                )) ||
+                      searchText,
+                    )) ||
             (request['requester_name'] != null &&
                 request['requester_name'].toString().toLowerCase().contains(
-                  searchText,
-                )) ||
+                      searchText,
+                    )) ||
+            (request['owner_name'] != null &&
+                request['owner_name'].toString().toLowerCase().contains(
+                      searchText,
+                    )) ||
             (request['pet_type'] != null &&
                 request['pet_type'].toString().toLowerCase().contains(
-                  searchText,
-                )) ||
+                      searchText,
+                    )) ||
             (request['motivation'] != null &&
                 request['motivation'].toString().toLowerCase().contains(
-                  searchText,
-                ));
+                      searchText,
+                    )) ||
+            (request['adoption_status'] != null &&
+                request['adoption_status'].toString().toLowerCase().contains(
+                      searchText,
+                    ));
       }).toList();
 
-      status = filteredAdoptions.isEmpty ? "No matching requests found" : "";
+      status = filteredAdoptions.isEmpty ? "No matching records found" : "";
     });
   }
 
