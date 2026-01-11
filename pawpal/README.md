@@ -74,7 +74,7 @@
     </ul>
   </li>
   <li>Donation form with validation</li>
-  <li>Stored in <b>tbl_donations</b></li>
+  <li>Stored in <b>tbl_donation</b></li>
 </ul>
 
 <h4>6. Profile Management</h4>
