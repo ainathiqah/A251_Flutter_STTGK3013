@@ -1,161 +1,144 @@
-# pawpal
-<p>
-  <b>PawPal Pet Adoption & Donation App</b> is the <b>continuous full-stack project series</b>,
-  focused on developing a real-world mobile application using
-  <b>Flutter (frontend)</b> and <b>PHP + MySQL (backend)</b>.
+<h1 align="center">🐾 PawPal</h1>
+
+<p align="center">
+  <b>Pet Adoption & Donation Mobile App</b><br/>
+  A continuous full-stack project built with Flutter, PHP, and MySQL
 </p>
 
-<p>
-  PawPal is an <b>Android-based mobile application</b> designed to connect pet lovers with animals in need by
-  enabling <b>pet adoption</b>, <b>pet donation</b>, and <b>community support</b> through a simple and
-  user-friendly platform.
+<p align="center">
+  <img src="https://img.shields.io/badge/Flutter-02569B?style=flat&logo=flutter&logoColor=white" />
+  <img src="https://img.shields.io/badge/PHP-777BB4?style=flat&logo=php&logoColor=white" />
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Android-3DDC84?style=flat&logo=android&logoColor=white" />
 </p>
 
-<hr/>
+---
 
-<h3>Tech Stack</h3>
-<ul>
-  <li><b>Flutter</b> – Frontend (Mobile UI)</li>
-  <li><b>PHP</b> – Backend (REST API)</li>
-  <li><b>MySQL</b> – Database</li>
-</ul>
+## About
 
-<hr/>
+PawPal is an Android mobile application that connects pet lovers with animals in need. It enables pet adoption, pet donation, and community support through a simple, user-friendly platform.
 
-<h3>Application Capabilities</h3>
-<ul>
-  <li>Browse pets available for <b>adoption</b></li>
-  <li>Submit pets for <b>adoption or donation</b></li>
-  <li>Request pet <b>adoption</b></li>
-  <li>Donate <b>money, food, or medical aid</b> to pets in need</li>
-</ul>
+---
 
-<hr/>
+## Tech Stack
 
-<h3>Features & Functionality</h3>
+| Layer | Technology |
+|---|---|
+| Frontend | Flutter (Mobile UI) |
+| Backend | PHP (REST API) |
+| Database | MySQL |
 
-<h4>1. User Authentication</h4>
-<ul>
-  <li>User registration with validation</li>
-  <li>Login with <b>SHA-1 password hashing</b></li>
-  <li>Session stored using <b>SharedPreferences</b></li>
-</ul>
+---
 
-<h4>2. Public Pet Listing</h4>
-<ul>
-  <li>View all pets</li>
-  <li>Search by pet name</li>
-  <li>Filter by category</li>
-</ul>
+## Application Capabilities
 
-<h4>3. Pet Submission</h4>
-<ul>
-  <li>Submit pet for adoption or donation</li>
-  <li>Upload up to <b>3 images</b></li>
-  <li>Images encoded in <b>Base64</b></li>
-  <li>Stored using <code>file_put_contents()</code></li>
-  <li>Data saved in <b>tbl_pets</b></li>
-</ul>
+- Browse pets available for adoption
+- Submit pets for adoption or donation
+- Request pet adoption
+- Donate money, food, or medical aid to pets in need
 
-<h4>4. Adoption Request</h4>
-<ul>
-  <li>Submit motivation message</li>
-  <li>Input validation applied</li>
-  <li>Stored in <b>tbl_adoptions</b></li>
-</ul>
+---
 
-<h4>5. Donation Module</h4>
-<ul>
-  <li>Donation types:
-    <ul>
-      <li>Money</li>
-      <li>Food</li>
-      <li>Medical</li>
-    </ul>
-  </li>
-  <li>Donation form with validation</li>
-  <li>Stored in <b>tbl_donation</b></li>
-</ul>
+## Features
 
-<h4>6. Profile Management</h4>
-<ul>
-  <li>View & edit user profile</li>
-  <li>Upload profile image</li>
-</ul>
+### 1. User Authentication
+- User registration with validation
+- Login with SHA-1 password hashing
+- Session stored using SharedPreferences
 
-## App Screenshots
+### 2. Public Pet Listing
+- View all pets
+- Search by pet name
+- Filter by category
+
+### 3. Pet Submission
+- Submit pet for adoption or donation
+- Upload up to 3 images, encoded in Base64
+- Stored using `file_put_contents()`
+- Data saved in `tbl_pets`
+
+### 4. Adoption Request
+- Submit motivation message
+- Input validation applied
+- Stored in `tbl_adoptions`
+
+### 5. Donation Module
+- Donation types: Money, Food, Medical
+- Donation form with validation
+- Stored in `tbl_donation`
+
+### 6. Profile Management
+- View and edit user profile
+- Upload profile image
+
+---
+
+## Screenshots
 
 <table>
-  <!-- Row 1 -->
   <tr>
-    <td align="center">
-      <img width="200" height="500" src="https://github.com/user-attachments/assets/e15b3ecd-4645-447d-bcdb-1182d40ef95b" />
-      <br/>Login
+    <td align="center" width="25%">
+      <img src="https://github.com/user-attachments/assets/e15b3ecd-4645-447d-bcdb-1182d40ef95b" width="160" /><br/>
+      <sub><b>Login</b></sub>
     </td>
-    <td align="center">
-      <img width="200" height="500" src="https://github.com/user-attachments/assets/5d0a86c6-9d52-4e75-937f-cc1aa55d8d2c" />
-      <br/>Register
+    <td align="center" width="25%">
+      <img src="https://github.com/user-attachments/assets/5d0a86c6-9d52-4e75-937f-cc1aa55d8d2c" width="160" /><br/>
+      <sub><b>Register</b></sub>
     </td>
-    <td align="center">
-      <img width="200" height="500" src="https://github.com/user-attachments/assets/bf5006aa-1fc9-4eb0-b540-327d4cc96545" />
-      <br/>Public Pet Listing
+    <td align="center" width="25%">
+      <img src="https://github.com/user-attachments/assets/bf5006aa-1fc9-4eb0-b540-327d4cc96545" width="160" /><br/>
+      <sub><b>Public Pet Listing</b></sub>
     </td>
-    <td align="center">
-      <img width="200" height="500" src="https://github.com/user-attachments/assets/64afeeb5-bbd1-4eb9-900c-c8f314695be8" />
-      <br/>Donation Option
+    <td align="center" width="25%">
+      <img src="https://github.com/user-attachments/assets/64afeeb5-bbd1-4eb9-900c-c8f314695be8" width="160" /><br/>
+      <sub><b>Donation Option</b></sub>
     </td>
   </tr>
-
-  <!-- Spacer -->
-  <tr>
-    <td colspan="4"><br/></td>
-  </tr>
-
-  <!-- Row 2 -->
   <tr>
     <td align="center">
-      <img width="200" height="500" src="https://github.com/user-attachments/assets/d3ccd096-9864-43e6-b7ec-581830fbe51e" />
-      <br/>Donation Page
+      <img src="https://github.com/user-attachments/assets/d3ccd096-9864-43e6-b7ec-581830fbe51e" width="160" /><br/>
+      <sub><b>Donation Page</b></sub>
     </td>
     <td align="center">
-      <img width="200" height="500" src="https://github.com/user-attachments/assets/1af7546f-9b03-4126-89cc-336aab1727d5" />
-      <br/>Donation History
+      <img src="https://github.com/user-attachments/assets/1af7546f-9b03-4126-89cc-336aab1727d5" width="160" /><br/>
+      <sub><b>Donation History</b></sub>
     </td>
     <td align="center">
-      <img width="200" height="500" src="https://github.com/user-attachments/assets/940e9fde-dd56-4cf4-bb8f-daa2a2206002" />
-      <br/>Adoption Option
+      <img src="https://github.com/user-attachments/assets/940e9fde-dd56-4cf4-bb8f-daa2a2206002" width="160" /><br/>
+      <sub><b>Adoption Option</b></sub>
     </td>
     <td align="center">
-      <img width="200" height="500" src="https://github.com/user-attachments/assets/c00b55f2-731b-4f9d-a24c-db91c71ef900" />
-      <br/>Adoption Pending / Status
+      <img src="https://github.com/user-attachments/assets/c00b55f2-731b-4f9d-a24c-db91c71ef900" width="160" /><br/>
+      <sub><b>Adoption Status</b></sub>
     </td>
   </tr>
-
-  <!-- Spacer -->
-  <tr>
-    <td colspan="4"><br/></td>
-  </tr>
-
-  <!-- Row 3 -->
   <tr>
     <td align="center">
-      <img width="200" height="500" src="https://github.com/user-attachments/assets/d92f8002-3e48-4baf-a106-1fb40c867f44" />
-      <br/>Adoption Records
+      <img src="https://github.com/user-attachments/assets/d92f8002-3e48-4baf-a106-1fb40c867f44" width="160" /><br/>
+      <sub><b>Adoption Records</b></sub>
     </td>
     <td align="center">
-      <img width="200" height="500" src="https://github.com/user-attachments/assets/8fe35173-0341-47a1-9366-5e3c69c4b532" />
-      <br/>My Pet Page
+      <img src="https://github.com/user-attachments/assets/8fe35173-0341-47a1-9366-5e3c69c4b532" width="160" /><br/>
+      <sub><b>My Pet Page</b></sub>
     </td>
     <td align="center">
-      <img width="200" height="500" src="https://github.com/user-attachments/assets/fa9dae7c-7e1b-4d21-9f5a-410cabc9fbdb" />
-      <br/>My Pet Submission
+      <img src="https://github.com/user-attachments/assets/fa9dae7c-7e1b-4d21-9f5a-410cabc9fbdb" width="160" /><br/>
+      <sub><b>My Pet Submission</b></sub>
     </td>
     <td align="center">
-      <img width="200" height="500" src="https://github.com/user-attachments/assets/bffb8767-d6c5-41db-8c0f-e8cdccc9cc07" />
-      <br/>My Profile
+      <img src="https://github.com/user-attachments/assets/bffb8767-d6c5-41db-8c0f-e8cdccc9cc07" width="160" /><br/>
+      <sub><b>My Profile</b></sub>
     </td>
   </tr>
 </table>
 
+---
 
+## Database Tables
 
+| Table | Purpose |
+|---|---|
+| `tbl_users` | User accounts and profile data |
+| `tbl_pets` | Pet submissions for adoption or donation |
+| `tbl_adoptions` | Adoption requests and status |
+| `tbl_donation` | Money, food, and medical donations |
